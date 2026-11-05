@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Criterion 1 Place-Value Check</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: one centred work card on graph paper; criterion banner on top, one question at a time, outcome replaces the question. */
+:root{
+  --bg:#eef2f7; --grid:rgba(47,91,211,.08); --ink:#1b2433; --muted:#5b6678; --card:#ffffff; --line:#cdd5e1;
+  --accent:#2f5bd3; --accent-ink:#ffffff; --good:#1f7a3a; --good-bg:#e6f4ea; --warn:#a4491a; --warn-bg:#fbeee4;
+  --f-display:"Andika","Segoe UI",Verdana,system-ui,sans-serif;
+  --f-body:"Andika","Segoe UI",Verdana,system-ui,sans-serif;
+  --f-mono:"Andika","Segoe UI",Verdana,system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#11151c; --grid:rgba(125,156,240,.06); --ink:#e6eaf0; --muted:#9aa4b4; --card:#1a2029; --line:#2e3846;
+  --accent:#86a3f2; --accent-ink:#11151c; --good:#7cc681; --good-bg:#17301d; --warn:#f0a874; --warn-bg:#36230f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#11151c; --grid:rgba(125,156,240,.06); --ink:#e6eaf0; --muted:#9aa4b4; --card:#1a2029; --line:#2e3846;
+  --accent:#86a3f2; --accent-ink:#11151c; --good:#7cc681; --good-bg:#17301d; --warn:#f0a874; --warn-bg:#36230f; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:24px 24px;
+  min-height:100%;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px}
+main{max-width:680px;margin:0 auto;display:grid;gap:16px}
+.criterion{background:var(--ink);color:var(--card);border-radius:12px;padding:16px 20px;display:grid;gap:4px}
+.criterion .label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.75}
+.criterion h1{font-family:var(--f-display);font-weight:700;font-size:clamp(20px,4.2vw,26px);line-height:1.25;margin:0;text-wrap:balance}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 22px 24px;display:grid;gap:18px}
+.progress{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.qnum{font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.dots{display:flex;gap:8px}
+.dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:15px;font-weight:700;color:var(--muted)}
+.dot.now{border-color:var(--accent);color:var(--accent)}
+.dot.ok{background:var(--good);border-color:var(--good);color:var(--card)}
+.dot.no{background:var(--warn);border-color:var(--warn);color:var(--card)}
+.prompt{font-size:20px;margin:0}
+.prompt b{color:var(--accent);font-family:var(--f-mono);font-size:1.1em}
+.number{font-family:var(--f-mono);font-weight:700;font-size:clamp(48px,13vw,84px);letter-spacing:.02em;line-height:1;text-align:center;padding:18px 0;border-block:1px dashed var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+form{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}
+label.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+input{flex:1 1 200px;min-width:0;font-family:var(--f-mono);font-size:26px;padding:10px 14px;border:2px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);font-variant-numeric:tabular-nums}
+input:focus{outline:none;border-color:var(--accent)}
+button{font:inherit;font-weight:700;font-size:18px;border-radius:10px;padding:12px 22px;cursor:pointer;border:2px solid var(--accent);background:var(--accent);color:var(--accent-ink)}
+button.ghost{background:transparent;color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.hint{font-size:14px;color:var(--muted);margin:-8px 0 0}
+.feedback{border-radius:10px;padding:14px 16px;display:grid;gap:12px}
+.feedback .verdict{font-weight:700;font-size:19px}
+.feedback .why{margin:0;color:var(--ink);font-size:17px;line-height:1.6}
+.feedback .why strong{color:inherit}
+.feedback .actions{display:flex;justify-content:flex-end}
+.pv{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border:2px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card);text-align:center}
+.pv div{padding:6px 4px;border-left:1px solid var(--line);min-width:0}
+.pv div:nth-child(5n+1){border-left:0}
+.pv .h{font-size:13px;line-height:1.2;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:center;min-height:44px}
+.pv .d{font-size:30px;font-weight:700;color:var(--ink)}
+.pv .v{font-size:15px;border-top:1px dashed var(--line);color:var(--muted);min-height:32px}
+.pv .hl{background:var(--warn-bg)}
+.pv .hl.d,.pv .hl.v{color:var(--warn);font-weight:700}
+.feedback.ok .pv .hl{background:var(--good-bg)}
+.feedback.ok .pv .hl.d,.feedback.ok .pv .hl.v{color:var(--good)}
+.feedback.ok{background:var(--good-bg);color:var(--good)}
+.feedback.no{background:var(--warn-bg);color:var(--warn)}
+.error{color:var(--warn);font-size:15px;margin:-6px 0 0}
+.outcome{text-align:center;display:grid;gap:14px;justify-items:center;padding:12px 0}
+.outcome .badge{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.outcome h2{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,7vw,46px);line-height:1.1;margin:0;text-wrap:balance}
+.outcome.ok h2,.outcome.ok .badge{color:var(--good)}
+.outcome.no h2,.outcome.no .badge{color:var(--warn)}
+.outcome p{margin:0;color:var(--muted);max-width:44ch}
+details{border-top:1px solid var(--line);padding-top:12px;font-size:15px}
+summary{cursor:pointer;color:var(--muted);font-weight:700}
+.tablewrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.mono{font-family:var(--f-mono)}
+.rule{font-size:13px;color:var(--muted);text-align:center;margin:0}
+@media (prefers-reduced-motion: no-preference){.card>*{animation:rise .25s ease-out}@keyframes rise{from{transform:translateY(4px)}to{transform:none}}}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+</style>
+</head>
+<body>
+
+<main>
+  <section class="criterion" aria-label="Criterion">
+    <span class="label">Criterion 1</span>
+    <h1>Identify the value of a specified digit in a five-digit number.</h1>
+  </section>
+  <section class="card" id="card" aria-live="polite"></section>
+  <p class="rule">Answer up to three questions. Two correct answers or two incorrect answers end the check.</p>
+</main>
+
+<script>
+(function(){
+const card=document.getElementById("card");
+const PLACES=["ten thousands","thousands","hundreds","tens","ones"];
+const fmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g," ");
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]}return a};
+
+let questions,answers,idx;
+
+function makeQuestion(place){
+  let digits;
+  do{digits=shuffle([0,1,2,3,4,5,6,7,8,9]).slice(0,5)}while(digits[0]===0||digits[place]===0);
+  const d=digits[place];
+  return {number:+digits.join(""),digit:d,place,value:d*10**(4-place)};
+}
+function numberHTML(q){return fmt(q.number)}
+function start(){
+  const places=shuffle([0,1,2,3,4]).slice(0,3);
+  questions=places.map(makeQuestion);answers=[];idx=0;showQuestion();
+}
+function counts(){const c=answers.filter(a=>a.correct).length;return{c,w:answers.length-c}}
+function dots(){
+  let h='<div class="dots" aria-hidden="true">';
+  for(let i=0;i<3;i++){
+    const a=answers[i];
+    h+=`<span class="dot ${a?(a.correct?"ok":"no"):(i===idx?"now":"")}">${a?(a.correct?"✓":"✗"):i+1}</span>`;
+  }
+  return h+"</div>";
+}
+function showQuestion(){
+  const q=questions[idx];
+  card.innerHTML=`
+    <div class="progress"><span class="qnum">Question ${idx+1}</span>${dots()}</div>
+    <p class="prompt">What is the value of the digit <b>${q.digit}</b> in this number?</p>
+    <div class="number">${numberHTML(q)}</div>
+    <form id="f" novalidate>
+      <label class="sr" for="ans">Your answer</label>
+      <input id="ans" inputmode="numeric" autocomplete="off" placeholder="Type the value">
+      <button type="submit">Check</button>
+    </form>
+    <p class="hint" id="fmtHint">Write the value as a number, for example 300.</p>
+    <p class="error" id="err" hidden></p>`;
+  const inp=document.getElementById("ans");inp.focus();
+  document.getElementById("f").addEventListener("submit",ev=>{
+    ev.preventDefault();
+    const raw=inp.value.replace(/[\s, ]/g,"");
+    const err=document.getElementById("err");
+    if(!/^\d+$/.test(raw)){err.textContent=raw?"Use digits only, for example 3000.":"Type your answer first.";err.hidden=false;inp.focus();return}
+    const resp=+raw;
+    answers.push({q,response:resp,correct:resp===q.value});
+    showFeedback();
+  });
+}
+function showFeedback(){
+  const a=answers[answers.length-1];const {c,w}=counts();
+  const done=c>=2||w>=2;
+  const form=card.querySelector("form");form.querySelector("input").disabled=true;form.querySelector("button").remove();
+  document.getElementById("fmtHint").remove();card.querySelector(".dots").outerHTML=dots();
+  const fb=document.createElement("div");
+  fb.className="feedback "+(a.correct?"ok":"no");
+  fb.innerHTML=`<span class="verdict">${a.correct?"✓ Correct!":"✗ Not quite."}</span>
+    <p class="why">${explain(a.q,a.response,a.correct)}</p>${a.correct?"":chart(a.q)}<div class="actions"></div>`;
+  const btn=document.createElement("button");btn.type="button";btn.className="ghost";
+  btn.textContent=done?"See what to do next":"Next question";
+  btn.onclick=()=>{if(done)showOutcome();else{idx++;showQuestion()}};
+  fb.querySelector(".actions").appendChild(btn);card.appendChild(fb);btn.focus();
+}
+const UNIT=[10000,1000,100,10,1];
+function rule(q){
+  return `The digit ${q.digit} is in the <strong>${PLACES[q.place]}</strong> place, so its value is ${q.digit} × ${fmt(UNIT[q.place])} = <strong>${fmt(q.value)}</strong>.`;
+}
+function explain(q,r,correct){
+  if(correct) return rule(q);
+  const s=String(q.number), tail=+s.slice(q.place);
+  let why;
+  const wrongPlace=UNIT.findIndex(u=>q.digit*u===r);
+  if(r===q.digit) why=`You wrote the digit ${q.digit} by itself. A digit’s value depends on its place, so we need to show which place the ${q.digit} is in.`;
+  else if(wrongPlace>=0) why=`${fmt(r)} would be the value of ${q.digit} in the <strong>${PLACES[wrongPlace]}</strong> place. Count the places again from the right.`;
+  else if(r===q.number) why=`You wrote the whole number. The question asks only about the digit ${q.digit}.`;
+  else if(r===tail && q.place<4) why=`You wrote ${fmt(r)}, which uses the digits after ${q.digit} too. To find the value of one digit, the places after it become zeros.`;
+  else if(String(r).includes(String(q.digit))) why=`Your answer has the digit ${q.digit} in it, but not in the right place. Check how many zeros come after it.`;
+  else why=`Look carefully at where the digit ${q.digit} sits in ${fmt(q.number)}.`;
+  return why+" "+rule(q);
+}
+function chart(q){
+  const ds=String(q.number).split("");
+  const heads=["Ten thousands","Thousands","Hundreds","Tens","Ones"];
+  let h='<div class="pv" role="table" aria-label="Place-value chart">';
+  heads.forEach((t,i)=>h+=`<div class="h${i===q.place?" hl":""}" role="columnheader">${t}</div>`);
+  ds.forEach((d,i)=>h+=`<div class="d${i===q.place?" hl":""}" role="cell">${d}</div>`);
+  ds.forEach((d,i)=>h+=`<div class="v${i===q.place?" hl":""}" role="cell">${i===q.place?fmt(q.value):""}</div>`);
+  return h+"</div>";
+}
+function showOutcome(){
+  const {c}=counts();const ok=c>=2;
+  const rows=answers.map((a,i)=>`<tr><td>${i+1}</td><td class="mono">${a.q.digit} in ${numberHTML(a.q)}</td><td>${PLACES[a.q.place]}</td><td class="mono">${fmt(a.response)}</td><td class="mono">${fmt(a.q.value)}</td><td>${a.correct?"✓":"✗"}</td></tr>`).join("");
+  card.innerHTML=`
+    <div class="outcome ${ok?"ok":"no"}">
+      <span class="badge">Criterion 1 ${ok?"achieved":"not yet achieved"}</span>
+      <h2>${ok?"You can proceed to Criterion 2":"Approach teacher"}</h2>
+      <p>${ok?"Well done. You identified the value of each digit correctly.":"Your teacher will go through place value with you."}</p>
+    </div>
+    <details>
+      <summary>Responses for the teacher</summary>
+      <div class="tablewrap"><table>
+        <thead><tr><th>#</th><th>Item</th><th>Place</th><th>Response</th><th>Value</th><th></th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+      <p style="margin:12px 0 0"><button type="button" class="ghost" id="again">Start a new check</button></p>
+    </details>`;
+  document.getElementById("again").onclick=start;
+  card.querySelector("h2").setAttribute("tabindex","-1");card.querySelector("h2").focus();
+}
+start();
+})();
+</script>
+</body>
+</html>
